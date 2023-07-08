@@ -18,6 +18,11 @@ public class Controller {
         return psimpl.allCharacters();
     }
 
+    @GetMapping("/hola2")
+    public String hola() {
+        return "hola";
+    }
+
     @GetMapping("/findCharacters/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Mono<Personajes> findCharacters(@PathVariable String id) {
