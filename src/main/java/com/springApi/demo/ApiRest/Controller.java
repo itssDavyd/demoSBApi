@@ -1,5 +1,7 @@
 package com.springApi.demo.ApiRest;
 
+import com.springApi.demo.Utils.PasswordHashUtils;
+import lombok.experimental.UtilityClass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -12,16 +14,52 @@ public class Controller {
     @Autowired
     PersonajesServiceIMPL psimpl;
 
+    @Autowired
+    UsuariosServiceIMPL userimpl;
+
+    //PETICIONES PARA CONTROLAR LA TABLA USUARIOS.
+
+    @GetMapping("/getAllUsuarios")
+    @ResponseStatus(HttpStatus.OK)
+    public Flux<Usuarios> getAllUsuarios() {
+        return userimpl.getAllUsuarios();
+    }
+
+    @GetMapping("/getUsuario/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Mono<Usuarios> getUsuario(@PathVariable String id) {
+        return userimpl.getUser(id);
+    }
+
+    @PostMapping("/saveUsuario")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Mono<Usuarios> saveUsuario(@RequestBody Usuarios usuarios) {
+        //Hasheamos la contraseña usando nuestro utils.
+        String passSinModificar = usuarios.getPassword();
+        usuarios.setPassword(PasswordHashUtils.PasswordHash(passSinModificar));
+        return userimpl.saveUser(usuarios);
+    }
+
+    @PutMapping("/updateUsuario")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Mono<Usuarios> updateUsuario(@RequestBody Usuarios usuarios) {
+        return userimpl.updateUser(usuarios);
+    }
+
+    @DeleteMapping("/delUsuario/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Mono<Void> delUsuario(@PathVariable String id) {
+        return userimpl.delUser(id);
+    }
+
+    //PETICIONES PARA CONTROLAR LA TABLA PERSONAJES.
+
     @GetMapping("/allCharacters")
     @ResponseStatus(HttpStatus.OK)
     public Flux<Personajes> allCharacters() {
         return psimpl.allCharacters();
     }
 
-    @GetMapping("/hola2")
-    public String hola() {
-        return "hola";
-    }
 
     @GetMapping("/findCharacters/{id}")
     @ResponseStatus(HttpStatus.OK)
